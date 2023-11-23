@@ -26,6 +26,7 @@ def create_app(name):
             cursorclass=pymysql.cursors.DictCursor
         )
 
+    app.config.update(**config)
     # Register Routes through the Home Blueprint
     app.register_blueprint(home)
 

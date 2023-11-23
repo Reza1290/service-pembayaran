@@ -4,7 +4,12 @@ import os
 
 home = Blueprint('home', __name__)
 
-@home.route('/keuangan/', methods=['GET'])
+@home.route('/')
+def home_home():
+    return "Hi!"
+
+
+@home.route('/keuangan')
 def get_all_keuangan():
     # Get MySQL container connection details from environment variables
     db_host = os.environ.get('DB_HOST', 'localhost')
