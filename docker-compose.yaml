@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  api:
+    build: 
+      context: .
+    deploy:
+      replicas: 1
+    ports:
+      - "8084:8084"
+    # links:
+    #   - mysql
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - default
+
+  # mysql:
+  #   image: mysql
+  #   ports:
+  #     - "3307:3306"
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+  #   networks:
+  #     - default
+  #   volumes:
+  #     - ./mysqlData:/var/lib/mysql
+
+networks:
+  default:    
