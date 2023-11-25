@@ -20,6 +20,6 @@ config = {
     ## SECRET
     "SECRET_KEY": environ.get("SECRET_KEY") if environ.get("SECRET_KEY") else "secret",
     ## PORT
-    "PORT": environ.get("PORT") if environ.get("PORT") else 7000,
+    "PORT": environ.get("PORT") if environ.get("PORT") else 8084,
 
 }
