@@ -9,7 +9,6 @@ def create_app(name):
     # Create APP Object
     app = flask.Flask(name)
     
-    # # Update Config Values
     # app.config['DB_HOST'] = os.environ.get('DB_HOST')
     # app.config['DB_USER'] = os.environ.get('DB_USER')
     # app.config['DB_PASSWORD'] = os.environ.get('DB_PASSWORD')

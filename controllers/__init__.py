@@ -57,8 +57,8 @@ def create_keuangan():
             if 'tanggal_arsip' not in data or 'pemasukan' not in data or 'pengeluaran' not in data:
                 return jsonify({'error': 'Invalid data format'}), 400
 
-            cursor.execute('INSERT INTO keuangans (tanggal_arsip, pemasukan, pengeluaran) VALUES (%s, %s, %s)',
-                           (data['tanggal_arsip'], data['pemasukan'], data['pengeluaran']))
+            cursor.execute('INSERT INTO keuangans (tanggal_arsip, pemasukan, pengeluaran, created_at) VALUES (%s, %s, %s, %s)',
+                           (data['tanggal_arsip'], data['pemasukan'], data['pengeluaran'], datetime.now()))
             connection.commit()
             return jsonify({'message': 'Keuangan created successfully'})
     except Exception as e:
@@ -80,8 +80,8 @@ def update_keuangan(id):
             if 'tanggal_arsip' not in data or 'pemasukan' not in data or 'pengeluaran' not in data:
                 return jsonify({'error': 'Invalid data format'}), 400
 
-            cursor.execute('UPDATE keuangans SET tanggal_arsip=%s, pemasukan=%s, pengeluaran=%s WHERE id=%s',
-                           (data['tanggal_arsip'], data['pemasukan'], data['pengeluaran'], id))
+            cursor.execute('UPDATE keuangans SET tanggal_arsip=%s, pemasukan=%s, pengeluaran=%s ,updated_at=%s WHERE id=%s',
+                           (data['tanggal_arsip'], data['pemasukan'], data['pengeluaran'],datetime.now(), id))
             connection.commit()
             return jsonify({'message': f'Keuangan with id {id} updated successfully'})
     except Exception as e:
@@ -156,8 +156,8 @@ def create_invoices():
             if 'receipt_file_path' not in data:
                 data['receipt_file_path'] = ''
 
-            cursor.execute('INSERT INTO invoices (id_detail_kunjungan, catatan, receipt_file_path) VALUES (%s, %s, %s)',
-                           (data['id_detail_kunjungan'], data['catatan'], data['receipt_file_path'] ))
+            cursor.execute('INSERT INTO invoices (id_detail_kunjungan, catatan, receipt_file_path, created_at) VALUES (%s, %s, %s, %s)',
+                           (data['id_detail_kunjungan'], data['catatan'], data['receipt_file_path'], datetime.now() ))
             connection.commit()
             return jsonify({'message': 'Keuangan created successfully'})
     except Exception as e:
@@ -179,8 +179,8 @@ def update_invoices(id):
             if 'id_detail_kunjungan' not in data:
                 return jsonify({'error': 'Invalid data format'}), 400
 
-            cursor.execute('UPDATE invoices SET id_detail_kunjungan=%s, catatan=%s, receipt_file_path=%s WHERE id=%s',
-                           (data['id_detail_kunjungan'], data['catatan'], data['receipt_file_path'], id))
+            cursor.execute('UPDATE invoices SET id_detail_kunjungan=%s, catatan=%s, receipt_file_path=%s , updated_at=%s WHERE id=%s',
+                           (data['id_detail_kunjungan'], data['catatan'], data['receipt_file_path'], datetime.now(), id))
             connection.commit()
             return jsonify({'message': f'Keuangan with id {id} updated successfully'})
     except Exception as e:
@@ -593,8 +593,86 @@ def pembayaran_riwayat():
             return jsonify(data)    
     finally:
         connection.close()
+
+
+@home.route('/pembayaran/update', methods=['POST'])
+def pembayaran_proses():
+    connection = None
+    try:
+        connection = connect()
+        with connection.cursor(dictionary=True) as cursor:
+            data = request.json
+
+            if 'id' not in data:
+                return jsonify({'error': 'Invalid data format (id)'}), 400
+
+            query = f"""
+            SELECT pembayaran FROM detail_kunjungans
+            WHERE id = {data['id']}
+            """
+            
+            cursor.execute(query)
+            res = cursor.fetchone()
+            
+            if not res:
+                return jsonify({'message': 'Invoice not found.'}), 404
+            
+            
+            uang = 0
+            if res['pembayaran'] == None:
+                uang = 30000
+            else:
+                uang = res['pembayaran']
+            
+            query = f"""
+            INSERT INTO keuangans (pemasukan,pengeluaran,tanggal_arsip,created_at) VALUES ({uang,0,datetime.now(),datetime.now()})
+            """
+            
+            cursor.execute(query)
+            connection.commit()
+            
+            return jsonify({'message': 'Keuangan created successfully'})
+
+
+            
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if connection:
+            connection.close()
+    
+        
     
     
+    
+@home.route('/pembayaran/update', methods=['POST'])
+def pembayaran_update():
+    connection = None
+    try:
+        connection = connect()
+        with connection.cursor(dictionary=True) as cursor:
+            data = request.json
+
+        if 'kunjungan_id' not in data:
+            return jsonify({'error': 'Invalid data format (kunjungan_id)'}), 400
+
+        
+        query = f"""
+        SELECT status_pembayaran FROM kunjungans
+        WHERE id = {data["kunjungan_id"]}
+        """
+        
+        cursor.execute(query)
+        connection.commit()
+        
+        return jsonify({'message': 'Pembayaran updated successfully','alert':'updated!'})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if connection:
+            connection.close()
     
     
     
