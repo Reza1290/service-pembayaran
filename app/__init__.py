@@ -26,10 +26,13 @@ def create_app(name):
     #         charset='utf8mb4',
     #         cursorclass=pymysql.cursors.DictCursor
     #     )
+    app.config['JSON_SORT_KEYS'] = False
+    app.json.sort_keys = False
 
     app.config.update(**config)
     # Register Routes through the Home Blueprint
     app.register_blueprint(home)
+    
 
     # Register CLI COMMANDS
     create_cli(app)
