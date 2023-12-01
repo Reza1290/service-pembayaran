@@ -4,6 +4,8 @@ import os
 from cli import create_cli
 from controllers import home
 from config import config
+from flask_cors import CORS
+
 
 def create_app(name):
     # Create APP Object
@@ -28,12 +30,13 @@ def create_app(name):
     app.config['JSON_SORT_KEYS'] = False
     app.json.sort_keys = False
 
+
     app.config.update(**config)
     # Register Routes through the Home Blueprint
     app.register_blueprint(home)
-    
+    cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Register CLI COMMANDS
     create_cli(app)
-
-    return app
+    
+    return app  
