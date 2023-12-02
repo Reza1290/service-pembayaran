@@ -646,7 +646,7 @@ def pembayaran_proses():
     
     
     
-@home.route('/pembayaran/update', methods=['POST'])
+@home.route('/pembayaran/status', methods=['POST'])
 def pembayaran_update():
     connection = None
     try:

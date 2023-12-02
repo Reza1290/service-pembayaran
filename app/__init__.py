@@ -35,7 +35,7 @@ def create_app(name):
     # Register Routes through the Home Blueprint
     app.register_blueprint(home)
     cors = CORS(app, resources={r"/*": {"origins": "*"}})
-
+    
     # Register CLI COMMANDS
     create_cli(app)
     
