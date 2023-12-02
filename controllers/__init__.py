@@ -659,7 +659,7 @@ def pembayaran_update():
 
         
         query = f"""
-        UPDATE SET kunjungans (status_pembayaran) values(1) WHERE id = {data['kunjungan_id']}
+        UPDATE SET kunjungans status_pembayaran=1 WHERE id = {data['kunjungan_id']}
         """
         
         cursor.execute(query)
