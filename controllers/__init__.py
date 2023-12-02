@@ -654,18 +654,18 @@ def pembayaran_update():
         with connection.cursor(dictionary=True) as cursor:
             data = request.json
 
-        if 'kunjungan_id' not in data:
-            return jsonify({'error': 'Invalid data format (kunjungan_id)'}), 400
+            if 'kunjungan_id' not in data:
+                return jsonify({'error': 'Invalid data format (kunjungan_id)'}), 400
 
-        
-        query = f"""
-        UPDATE SET kunjungans status_pembayaran=1 WHERE id = {data['kunjungan_id']}
-        """
-        
-        cursor.execute(query)
-        connection.commit()
-        
-        return jsonify({'message': 'Pembayaran updated successfully','alert':'updated!'})
+            
+            query = """
+                UPDATE kunjungans SET status_pembayaran = 1 WHERE id = %s
+                """
+            
+            cursor.execute(query, (data['kunjungan_id'],))
+            connection.commit()
+            
+            return jsonify({'message': 'Pembayaran updated successfully','alert':'updated!'})
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
